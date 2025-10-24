@@ -1,0 +1,71 @@
+﻿using InventoryUpdateApp.Models;
+using InventoryUpdateApp.Enums;
+
+namespace InventoryUpdateApp;
+public static class Helper
+{
+    private static readonly Dictionary<int, InventoryItemModel> _Inventory = new();
+
+    private static void PopulateDictionary()
+    {
+        if (_Inventory.Count == 0)
+        {
+            _Inventory.Add(1, new InventoryItemModel { Id = 1, Name = "Milk", Location = Location.Grocery, Price = 3.99m });
+            _Inventory.Add(2, new InventoryItemModel { Id = 2, Name = "Car Oil", Location = Location.Auto, Price = 19.99m });
+            _Inventory.Add(3, new InventoryItemModel { Id = 3, Name = "Faded Jeans", Location = Location.Clothing, Price = 25m });
+            _Inventory.Add(4, new InventoryItemModel { Id = 4, Name = "Stainless Steel Pan", Location = Location.HomeGoods, Price = 9.95m });
+            _Inventory.Add(5, new InventoryItemModel { Id = 5, Name = "Toaster", Location = Location.HomeGoods, Price = 15m });
+            _Inventory.Add(6, new InventoryItemModel { Id = 6, Name = "Captain Crunch", Location = Location.Grocery, Price = 7m });
+            _Inventory.Add(7, new InventoryItemModel { Id = 7, Name = "Tires", Location = Location.Auto, Price = 250m });
+            _Inventory.Add(8, new InventoryItemModel { Id = 8, Name = "Dress Shoes", Location = Location.Clothing, Price = 50m }); 
+        }
+    }
+
+    public static List<InventoryItemModel> GetAllItems()
+    {
+        PopulateDictionary();
+
+        var output = _Inventory.Values.ToList();
+
+        return output;
+    }
+
+    public static InventoryItemModel GetItemById(int id)
+    {
+        PopulateDictionary();
+
+        var output = _Inventory.Values.ToList().FirstOrDefault(i => i.Id == id);
+
+        return output;
+    }
+
+    public static List<InventoryItemModel> GetItemsByLocation(string location)
+    {
+        PopulateDictionary();
+
+        if (!Enum.TryParse<Location>(location, true, out var locEnum))
+        {
+            throw new Exception("The entered location does not exist.");
+        }
+
+        List<InventoryItemModel> output = _Inventory.Values.Where(i => i.Location == locEnum).ToList();
+
+        return output;
+    }
+
+    public static void Print(this InventoryItemModel item)
+    {
+        Console.WriteLine(
+                $"""
+                Id: {item.Id}, Name: {item.Name}, Location: {item.Location}, Price: ${item.Price}.
+                """);
+    }
+
+    public static void Print(this List<InventoryItemModel> list)
+    {
+        foreach (var item in list)
+        {
+            item.Print();
+        }
+    }
+}
