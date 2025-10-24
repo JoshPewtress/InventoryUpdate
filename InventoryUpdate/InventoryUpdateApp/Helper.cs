@@ -41,10 +41,59 @@ public static class Helper
 
         if (!_Inventory.TryGetValue(id, out var output))
         {
-            throw new ItemNotFoundException($"No product found with ID {id}");
+            Console.Write($"No product found with ID {id}, Create Item? Y\\N: ");
+            string response = Console.ReadLine().Trim().ToUpper();
+            if (response == "Y")
+            {
+                (string pName, Location locEnum, decimal pPrice) = PromptForItemInfo();
+                AddInventoryItem(pName, locEnum, pPrice);
+            }
+            else
+            {
+                throw new ItemNotFoundException($"No product found with ID {id}");
+            }     
         }
 
         return output;
+    }
+
+    public static (string pName, Location locEnum, decimal pPrice) PromptForItemInfo()
+    {
+        Console.Write("Enter the Product Name: ");
+        string pName = Console.ReadLine();
+
+        Console.Write("Enter the Product Location: ");
+        string plocation = Console.ReadLine();
+        if (!Enum.TryParse<Location>(plocation, true, out var locEnum))
+        {
+            throw new ItemNotFoundException($"'{plocation}' is not a valid location.");
+        }
+
+        Console.Write("Enter the Product Price: ");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal pPrice))
+        {
+            throw new Exception("Not a valid price amount.");
+        }
+
+        return (pName, locEnum, pPrice);
+    }
+
+    public static void AddInventoryItem(string name, Location location, decimal price)
+    {
+        PopulateDictionary();
+
+        // If dictionary is not empty find highest key and add 1, otherwise its 1
+        int nextId = _Inventory.Keys.Max() + 1;
+
+        var newItem = new InventoryItemModel()
+        {
+            Id = nextId,
+            Name = name,
+            Location = location,
+            Price = price
+        };
+
+        _Inventory.Add(nextId, newItem);
     }
 
     public static List<InventoryItemModel> GetItemsByLocation(string location)

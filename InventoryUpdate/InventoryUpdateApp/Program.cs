@@ -1,4 +1,5 @@
 ﻿using InventoryUpdateApp;
+using InventoryUpdateApp.Enums;
 using InventoryUpdateApp.Exceptions;
 
 UIMethods.Greeting();
@@ -25,8 +26,9 @@ public class UIMethods
             1 - List all Products
             2 - Search by ID
             3 - Search by Location
-            4 - Clear Console
-            5 - Exit Application
+            4 - Add Product
+            5 - Clear Console
+            6 - Exit Application
             """);
 
             Console.Write("Selection: ");
@@ -48,10 +50,13 @@ public class UIMethods
                     Console.WriteLine();
                     break;
                 case 4:
+                    CreateProduct();
+                    break;
+                case 5:
                     Console.Clear();
                     DecisionTree();
                     break;
-                case 5:
+                case 6:
                     Environment.Exit(0);
                     return;
                 default:
@@ -103,6 +108,19 @@ public class UIMethods
             Helper.GetItemsByLocation(Console.ReadLine()).Print();
         }
         catch (ItemNotFoundException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    public static void CreateProduct()
+    {
+        try
+        {
+            (string name, Location location, decimal price) = Helper.PromptForItemInfo();
+            Helper.AddInventoryItem(name, location, price);
+        }
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
         }
