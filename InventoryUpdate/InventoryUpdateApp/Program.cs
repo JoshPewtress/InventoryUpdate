@@ -1,4 +1,8 @@
 ﻿using InventoryUpdateApp;
+using InventoryUpdateApp.Exceptions;
+
+UIMethods.Greeting();
+UIMethods.DecisionTree();
 
 public class UIMethods
 {
@@ -59,27 +63,48 @@ public class UIMethods
 
     public static void ListAllProducts()
     {
-        Helper.GetAllItems().Print();
+        try
+        {
+            Helper.GetAllItems().Print();
+        }
+        catch (ItemNotFoundException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     public static void ListProductById()
     {
-        bool validId;
-        int id;
-
-        do
+        try
         {
-            Console.Write("Enter the Product ID: ");
-            validId = int.TryParse(Console.ReadLine(), out id);
+            bool validId;
+            int id;
 
-        } while (validId == false);
+            do
+            {
+                Console.Write("Enter the Product ID: ");
+                validId = int.TryParse(Console.ReadLine(), out id);
 
-        Helper.GetItemById(id).Print();
+            } while (validId == false);
+
+            Helper.GetItemById(id).Print();
+        }
+        catch (ItemNotFoundException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     public static void ListProductByLocation()
     {
-        Console.Write("Enter the Location to search: ");
-        Helper.GetItemsByLocation(Console.ReadLine()).Print();
+        try
+        {
+            Console.Write("Enter the Location to search: ");
+            Helper.GetItemsByLocation(Console.ReadLine()).Print();
+        }
+        catch (ItemNotFoundException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 }
