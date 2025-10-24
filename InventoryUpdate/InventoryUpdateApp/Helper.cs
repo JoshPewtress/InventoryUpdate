@@ -1,5 +1,6 @@
 ﻿using InventoryUpdateApp.Models;
 using InventoryUpdateApp.Enums;
+using InventoryUpdateApp.Exceptions;
 
 namespace InventoryUpdateApp;
 public static class Helper
@@ -26,6 +27,10 @@ public static class Helper
         PopulateDictionary();
 
         var output = _Inventory.Values.ToList();
+        if (!output.Any())
+        {
+            throw new ItemNotFoundException("No products found in inventory.");
+        }
 
         return output;
     }
@@ -34,7 +39,10 @@ public static class Helper
     {
         PopulateDictionary();
 
-        var output = _Inventory.Values.ToList().FirstOrDefault(i => i.Id == id);
+        if (!_Inventory.TryGetValue(id, out var output))
+        {
+            throw new ItemNotFoundException($"No product found with ID {id}");
+        }
 
         return output;
     }
@@ -45,10 +53,14 @@ public static class Helper
 
         if (!Enum.TryParse<Location>(location, true, out var locEnum))
         {
-            throw new Exception("The entered location does not exist.");
+            throw new ItemNotFoundException($"'{location}' is not a valid location.");
         }
 
         List<InventoryItemModel> output = _Inventory.Values.Where(i => i.Location == locEnum).ToList();
+        if (!output.Any())
+        {
+            throw new ItemNotFoundException($"No products found in location '{location}'");
+        }
 
         return output;
     }
