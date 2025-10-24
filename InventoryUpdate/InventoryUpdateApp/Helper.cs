@@ -52,4 +52,20 @@ public static class Helper
 
         return output;
     }
+
+    public static void Print(this InventoryItemModel item)
+    {
+        Console.WriteLine(
+                $"""
+                Id: {item.Id}, Name: {item.Name}, Location: {item.Location}, Price: ${item.Price}.
+                """);
+    }
+
+    public static void Print(this List<InventoryItemModel> list)
+    {
+        foreach (var item in list)
+        {
+            item.Print();
+        }
+    }
 }
